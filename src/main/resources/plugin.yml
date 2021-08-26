@@ -1,0 +1,5 @@
+main: io.github.spaery.trashcan.Trashcan
+name: Trashcan
+author: Spaery
+version: 1.0-alpha
+api-version: 1.17
