@@ -1,6 +1,7 @@
 package io.github.spaery.trashcan;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -9,18 +10,26 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Trashcan extends JavaPlugin
 {
-    Trashcan plugin = this;
-    FileConfiguration config = plugin.getConfig();
+    private static Trashcan plugin;
+    FileConfiguration config = this.getConfig();
+
     @Override
     public void onEnable(){
-        plugin.saveDefaultConfig();
-        
+        plugin = this;
+        this.saveDefaultConfig();
+        getServer().getPluginManager().registerEvents(new TrashcanListener(), plugin);
     }
+
     @Override
     public void onDisable(){
-
+        HandlerList.unregisterAll(plugin);
     }
+
     public FileConfiguration getDefaultConfig(){
         return config;
+    }
+
+    public static Trashcan getPlugin(){
+        return plugin;
     }
 }

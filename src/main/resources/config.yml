@@ -1,2 +1,3 @@
 # The time between when an item is inserted and when it's deleted, in seconds.
 TimeBeforeDeletion: 10
+NameOfChest: "Trashcan"
