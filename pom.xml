@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.spaery</groupId>
-  <artifactId>trashcan</artifactId>
-  <version>1.0.0</version>
+  <artifactId>Trashcan</artifactId>
+  <version>1.1.0</version>
 
-  <name>trashcan</name>
+  <name>Trashcan</name>
   <url>https://github.com/Spaery/trashcan</url>
 
   <properties>
