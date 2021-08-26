@@ -41,15 +41,24 @@ public class TrashcanListener implements Listener {
         String trashcanName = config.getString("NameOfChest").strip();
         if(inv.getHolder() instanceof Chest){
             Chest chest = (Chest) inv.getHolder();
-            if(chest.getCustomName().equals(trashcanName)){
-                deleteItems(inv,event);
+            try {
+                if(chest.getCustomName().equals(trashcanName)){
+                    deleteItems(inv,event);
+                }
+            } catch (NullPointerException e) {
+                return;
             }
+            
         } else if(inv.getHolder() instanceof DoubleChest) {
             DoubleChest dchest = (DoubleChest) inv.getHolder();
             Chest newChestLeft = (Chest) dchest.getLeftSide();
             Chest newChestRight = (Chest) dchest.getRightSide();
-            if(newChestLeft.getCustomName().equals(trashcanName) && newChestRight.getCustomName().equals(trashcanName)){
-                deleteItems(inv,event);
+            try {
+                if(newChestLeft.getCustomName().equals(trashcanName) && newChestRight.getCustomName().equals(trashcanName)){
+                    deleteItems(inv,event);
+                }
+            } catch (NullPointerException e) {
+                return;
             }
         }
     }
