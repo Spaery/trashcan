@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Trashcan makes it so that when a chest is renamed to 'Trashcan' 
- * any item in it's inventory will be deleted after a configurable amount of time
+ * any item in its inventory will be deleted after a configurable amount of time
  */
 public class Trashcan extends JavaPlugin
 {

@@ -12,6 +12,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.configuration.file.FileConfiguration;
 
+
 public class TrashcanListener implements Listener {
     Trashcan plugin = Trashcan.getPlugin();
     FileConfiguration config = plugin.getDefaultConfig();
@@ -26,6 +27,11 @@ public class TrashcanListener implements Listener {
             nameCheck(inv,event);
         } 
     }
+
+    /**
+     * The function which detects hopper transfer event passes event to nameCheck()
+     * @param event
+     */
     @EventHandler
     public void hopperInteraction(InventoryMoveItemEvent event){
         if(event.getDestination().getType().equals(InventoryType.CHEST)){
@@ -33,32 +39,28 @@ public class TrashcanListener implements Listener {
         }
     }
     /**
-     * Verifys the name of the chest is the name specified by NameOfChest in config.yml
-     * all checks that if its a double chest that both chest are named correctly
-     * @param inv the inventory passed by the interaction event in chestInteraction()
+     * Verifies the name of the chest is the name specified by NameOfChest in config.yml
+     * all checks that if it's a double chest that both chest are named correctly
+     * @param inv the inventory passed by the interaction event in chestInteraction() or hopperInteraction()
      */
     public void nameCheck(Inventory inv, Event event){
         String trashcanName = config.getString("NameOfChest").strip();
-        if(inv.getHolder() instanceof Chest){
-            Chest chest = (Chest) inv.getHolder();
+        if(inv.getHolder() instanceof Chest chest){
             try {
                 if(chest.getCustomName().equals(trashcanName)){
                     deleteItems(inv,event);
                 }
-            } catch (NullPointerException e) {
-                return;
+            } catch (NullPointerException ignored) {
             }
             
-        } else if(inv.getHolder() instanceof DoubleChest) {
-            DoubleChest dchest = (DoubleChest) inv.getHolder();
+        } else if(inv.getHolder() instanceof DoubleChest dchest) {
             Chest newChestLeft = (Chest) dchest.getLeftSide();
             Chest newChestRight = (Chest) dchest.getRightSide();
             try {
                 if(newChestLeft.getCustomName().equals(trashcanName) && newChestRight.getCustomName().equals(trashcanName)){
                     deleteItems(inv,event);
                 }
-            } catch (NullPointerException e) {
-                return;
+            } catch (NullPointerException ignored) {
             }
         }
     }
@@ -70,17 +72,11 @@ public class TrashcanListener implements Listener {
      * @param inv the inventory passed from nameCheck()
      */
     public void deleteItems(Inventory inv, Event e){
-        if(!inv.getStorageContents().equals(null)){
-            if(e.getEventName().equals("InventoryMoveItemEvent")){
-                inv.clear();
-            } else {
-                Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-                    @Override
-                    public void run() {
-                        inv.clear();
-                    }
-                }, 20*config.getInt("TimeBeforeDeletion"));
-            }
+        inv.getStorageContents();
+        if(e.getEventName().equals("InventoryMoveItemEvent")){
+            inv.clear();
+        } else {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> inv.clear(), 20L * config.getInt("TimeBeforeDeletion"));
         }
     }
 }
