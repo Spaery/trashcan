@@ -1,6 +1,7 @@
 package com.spaery.trashcan;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Barrel;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,9 +22,9 @@ public class TrashcanListener implements Listener {
      * @param event Interaction event
      */
     @EventHandler
-    public void chestInteraction(InventoryCloseEvent event){
+    public void chestInteraction(InventoryCloseEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getType() == InventoryType.CHEST){
+        if ((inv.getType() == InventoryType.CHEST) || (inv.getType() == InventoryType.BARREL)){
             nameCheck(inv,event);
         }
     }
@@ -33,8 +34,8 @@ public class TrashcanListener implements Listener {
      * @param event
      */
     @EventHandler
-    public void hopperInteraction(InventoryMoveItemEvent event){
-        if (event.getDestination().getType().equals(InventoryType.CHEST)){
+    public void hopperInteraction(InventoryMoveItemEvent event) {
+        if (event.getDestination().getType().equals(InventoryType.CHEST) || event.getDestination().getType().equals(InventoryType.BARREL)) {
             nameCheck(event.getDestination(),event);
         }
     }
@@ -52,17 +53,24 @@ public class TrashcanListener implements Listener {
 
         if (inv.getHolder() instanceof Chest chest){ // Single chest handler
             try {
-                if(chest.getCustomName().equals(trashcanName)){
-                    deleteItems(inv,event);
+                if (chest.getCustomName().equals(trashcanName)) {
+                    deleteItems(inv, event);
                 }
             } catch (NullPointerException ignored) {
             }
-        } else if (inv.getHolder() instanceof DoubleChest dchest){ // Double chest handler
+        } else if (inv.getHolder() instanceof DoubleChest dchest) { // Double chest handler
             Chest newChestLeft = (Chest) dchest.getLeftSide();
             Chest newChestRight = (Chest) dchest.getRightSide();
             try {
                 if (newChestLeft.getCustomName().equals(trashcanName) && newChestRight.getCustomName().equals(trashcanName)){
-                    deleteItems(inv,event);
+                    deleteItems(inv, event);
+                }
+            } catch (NullPointerException ignored){
+            }
+        } else if (inv.getHolder() instanceof Barrel barrel) {
+            try {
+                if (barrel.getCustomName().equals(trashcanName)) {
+                    deleteItems(inv, event);
                 }
             } catch (NullPointerException ignored){
             }
