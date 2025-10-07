@@ -13,6 +13,8 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
+import java.util.Objects;
+
 public class TrashcanListener implements Listener {
     Trashcan plugin = Trashcan.getPlugin();
     FileConfiguration config = plugin.getDefaultConfig();
@@ -52,27 +54,21 @@ public class TrashcanListener implements Listener {
         String trashcanName = config.getString("NameOfChest").strip();
 
         if (inv.getHolder() instanceof Chest chest){ // Single chest handler
-            try {
-                if (chest.getCustomName().equals(trashcanName)) {
-                    deleteItems(inv, event);
-                }
-            } catch (NullPointerException ignored) {
+            // getCustomName() is deprecated in PaperMC, but Spigot still uses this. Will replace when function no longer exists in PaperMC
+            if (Objects.equals(chest.getCustomName(), trashcanName)) {
+                deleteItems(inv, event);
             }
         } else if (inv.getHolder() instanceof DoubleChest dchest) { // Double chest handler
             Chest newChestLeft = (Chest) dchest.getLeftSide();
             Chest newChestRight = (Chest) dchest.getRightSide();
-            try {
-                if (newChestLeft.getCustomName().equals(trashcanName) && newChestRight.getCustomName().equals(trashcanName)){
-                    deleteItems(inv, event);
-                }
-            } catch (NullPointerException ignored){
+            // getCustomName() is deprecated in PaperMC, but Spigot still uses this. Will replace when function no longer exists in PaperMC
+            if (Objects.equals(newChestLeft.getCustomName(), trashcanName) && Objects.equals(newChestRight.getCustomName(), trashcanName)){
+                deleteItems(inv, event);
             }
-        } else if (inv.getHolder() instanceof Barrel barrel) {
-            try {
-                if (barrel.getCustomName().equals(trashcanName)) {
-                    deleteItems(inv, event);
-                }
-            } catch (NullPointerException ignored){
+        } else if (inv.getHolder() instanceof Barrel barrel) { // Barrel handler
+            // getCustomName() is deprecated in PaperMC, but Spigot still uses this. Will replace when function no longer exists in PaperMC
+            if (Objects.equals(barrel.getCustomName(), trashcanName)) {
+                deleteItems(inv, event);
             }
         }
     }
@@ -85,7 +81,8 @@ public class TrashcanListener implements Listener {
      */
     public void deleteItems(Inventory inv, Event e){
         inv.getStorageContents();
-        if (e.getEventName().equals("PaperInventoryMoveItemEvent")){
+        // Bukkit/Spigot uses InventoryMoveItemEvent, PaperMC uses PaperInventoryMoveItemEvent
+        if (e.getEventName().equals("InventoryMoveItemEvent") || e.getEventName().equals("PaperInventoryMoveItemEvent")){
             inv.clear();
         } else {
             Bukkit.getScheduler().runTaskLater(plugin, () -> inv.clear(), 20L * config.getInt("TimeBeforeDeletion"));
